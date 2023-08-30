@@ -1,0 +1,83 @@
+﻿@{
+    ViewData["Title"] = "Carrossel";
+}
+
+@*@model List<Product>;*@
+@using X.PagedList.Mvc;
+@model X.PagedList.PagedList<online_store.Models.Product>
+
+<br />
+<h3>Catálogo</h3>
+
+<br />
+
+<div id="my-carousel" class="carousel slide" data-ride="carousel">
+    <!-- Wrapper for slides -->
+    <div class="carousel-inner" role="listbox">
+
+        @{
+            const int PAGE_SIZE = 12;
+            int currentPage = 1;
+            var productPagination = Model.Skip((currentPage -1) * PAGE_SIZE).Take(PAGE_SIZE);
+            int pages =(int) Math.Ceiling((double)Model.Count() / PAGE_SIZE);
+            var totalPages = (int)Math.Ceiling((double)Model.Count() / PAGE_SIZE);
+        }
+
+        @for (int page = 0; page < pages; page++)
+        {
+            @*<div class="item active">*@
+                <div class="row h-100 justify-content-center">
+                    @{
+                        var productPage = Model.Skip(page * PAGE_SIZE).Take(PAGE_SIZE);
+                    }
+                    @foreach (var product in productPage)
+                    {
+                        <div class="col-sm-6 col-lg-3 d-flex align-items-center justify-content-center">
+                            <div class="text-center py-2">
+                                <div class="text-center py-2">
+                                    <img class="rounded" height="340" width="200" src="/products/large_@(product.Codigo).jpg" />
+                                </div>
+                                <div>
+                                    <div class="panel-footer produto-footer">
+                                        <div class="produto-nome">@product.Nome</div>
+                                        <div><h4><strong>@product.Preco</strong></h4></div>
+                                        <div class="text-center">
+                                            <a asp-controller="Order" asp-action="Carrinho" asp-route-codigo="@product.Codigo" 
+                                            class="btn btn-success">Adicionar</a>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    }                 
+                </div>
+            @*</div>*@
+        }      
+    </div>
+
+    <!-- Controls -->
+    <br />
+
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            @if (Model.HasPreviousPage)
+            {
+                <li class="page-item"><a class="page-link" href="@Url.Action("Carrossel", new { page = Model.PageNumber - 1 })">Previous</a></li>
+            }
+
+            @*@for (int i = 1; i <= totalPages; i++)
+            {
+                <li class="page-item"><a class ="page-link" href="@Url.Action("Carrossel", new { page = i })">Beginning</a>
+
+                </li>
+            }*@
+
+            @if (Model.HasNextPage)
+            {
+                <li class="page-item"><a class="page-link" href="@Url.Action("Carrossel", new { page = Model.PageNumber + 1 })">Next</a></li>
+            }
+        </ul>
+    </nav>
+</div>
